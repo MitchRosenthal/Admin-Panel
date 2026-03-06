@@ -64,6 +64,7 @@ Add new entries at the top. Format: `(YYYY-MM-DD) file_or_scope: short descripti
 
 | Date | File / scope | Description |
 |------|----------------|-------------|
+| 2026-03-05 | app/auth/callback/route.ts, lib/auth.ts, app/login/page.tsx | Vercel redirect loop fix: callback now attaches session cookies to redirect response (Set-Cookie); added temp console logs for user/session (login) and user/profile (admin guard). |
 | 2026-03-05 | app/page.tsx, lib/auth.ts | Non-admin landing: "Sorry, you do not have access." Hardcoded admin access for mr4431@columbia.edu in requireAdmin() and root redirect. |
 | 2026-03-05 | lib/auth.ts, app/login/page.tsx, app/page.tsx | Fixed redirect loop: admin guard redirects non-superadmin to `/` (not `/login`); root page only redirects to `/admin` when profile.is_superadmin; added temporary debug logs on login and admin guard. |
 | 2026-03-05 | .env.example → .env.local, AGENTS.md | Replaced `.env.example` with `.env.local` for local env vars; updated AGENTS.md file reference. |

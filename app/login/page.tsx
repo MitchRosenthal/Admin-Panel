@@ -11,7 +11,6 @@ export default async function LoginPage() {
     data: { session },
   } = await supabase.auth.getSession();
 
-  // DEBUG: remove after fixing redirect loop
   console.log("[login] user:", user ? { id: user.id, email: user.email } : null);
   console.log("[login] session:", session ? "present" : null);
 

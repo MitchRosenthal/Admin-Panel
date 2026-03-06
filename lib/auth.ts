@@ -24,6 +24,8 @@ export async function requireAdmin(): Promise<{ user: User; profile: AdminProfil
     error: userError,
   } = await supabase.auth.getUser();
 
+  console.log("[admin guard] user:", user ? { id: user.id, email: user.email } : null);
+
   if (userError || !user) {
     redirect("/login");
   }
@@ -40,6 +42,8 @@ export async function requireAdmin(): Promise<{ user: User; profile: AdminProfil
     .select("*")
     .eq("id", user.id)
     .maybeSingle();
+
+  console.log("[admin guard] profile:", profile ?? null, "profileError:", profileError?.message ?? null);
 
   if (profileError || !profile) {
     redirect("/");
