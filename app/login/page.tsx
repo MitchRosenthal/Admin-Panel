@@ -7,6 +7,13 @@ export default async function LoginPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  // DEBUG: remove after fixing redirect loop
+  console.log("[login] user:", user ? { id: user.id, email: user.email } : null);
+  console.log("[login] session:", session ? "present" : null);
 
   if (user) {
     redirect("/admin");

@@ -25,7 +25,7 @@
 | Login page + Google sign-in | `app/login/page.tsx`, `app/login/LoginForm.tsx` |
 | Admin layout (sidebar + guard) | `app/admin/layout.tsx` |
 | Admin routes (placeholders) | `app/admin/page.tsx`, `app/admin/dashboard/page.tsx`, `app/admin/users/page.tsx`, `app/admin/images/page.tsx`, `app/admin/captions/page.tsx` |
-| Env template | `.env.example` |
+| Local env (gitignored) | `.env.local` — set `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` |
 | Agent workflow / changelog | `AGENTS.md` (this file) |
 
 ---
@@ -64,6 +64,9 @@ Add new entries at the top. Format: `(YYYY-MM-DD) file_or_scope: short descripti
 
 | Date | File / scope | Description |
 |------|----------------|-------------|
+| 2026-03-05 | app/page.tsx, lib/auth.ts | Non-admin landing: "Sorry, you do not have access." Hardcoded admin access for mr4431@columbia.edu in requireAdmin() and root redirect. |
+| 2026-03-05 | lib/auth.ts, app/login/page.tsx, app/page.tsx | Fixed redirect loop: admin guard redirects non-superadmin to `/` (not `/login`); root page only redirects to `/admin` when profile.is_superadmin; added temporary debug logs on login and admin guard. |
+| 2026-03-05 | .env.example → .env.local, AGENTS.md | Replaced `.env.example` with `.env.local` for local env vars; updated AGENTS.md file reference. |
 | 2026-03-05 | AGENTS.md | Added agent instructions, file reference, conventions, and changelog. |
 | 2026-03-05 | .gitignore, git history | Ensured `.pnpm-store` is ignored; removed `.pnpm-store` from git history to fix GitHub 100MB push error. |
 | 2026-03-05 | — | Initial admin dashboard: Next.js 14, TypeScript, Tailwind, Supabase server/client, OAuth callback, `/login`, admin guard (`requireAdmin` + profiles.is_superadmin), `/admin` layout with sidebar, placeholder routes (dashboard, users, images, captions). |

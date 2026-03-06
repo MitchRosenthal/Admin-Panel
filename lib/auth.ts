@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { User } from "@supabase/supabase-js";
 
+export const HARDCODED_ADMIN_EMAIL = "mr4431@columbia.edu";
+
 export type AdminProfile = {
   id: string;
   is_superadmin: boolean;
@@ -11,10 +13,9 @@ export type AdminProfile = {
 /**
  * Server-side guard for admin routes.
  * 1. Retrieves the logged-in user from Supabase
- * 2. Queries the profiles table
- * 3. Checks profiles.is_superadmin === true
- * 4. Redirects non-admin users to /login
- * @returns { user, profile } for use in the page, or redirects
+ * 2. Hardcoded: mr4431@columbia.edu is always granted access
+ * 3. Otherwise queries profiles and requires profiles.is_superadmin === true
+ * 4. Redirects non-admin users to /
  */
 export async function requireAdmin(): Promise<{ user: User; profile: AdminProfile }> {
   const supabase = await createClient();
@@ -27,6 +28,13 @@ export async function requireAdmin(): Promise<{ user: User; profile: AdminProfil
     redirect("/login");
   }
 
+  if (user.email === HARDCODED_ADMIN_EMAIL) {
+    return {
+      user,
+      profile: { id: user.id, is_superadmin: true } as AdminProfile,
+    };
+  }
+
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("*")
@@ -34,11 +42,11 @@ export async function requireAdmin(): Promise<{ user: User; profile: AdminProfil
     .maybeSingle();
 
   if (profileError || !profile) {
-    redirect("/login");
+    redirect("/");
   }
 
   if (profile.is_superadmin !== true) {
-    redirect("/login");
+    redirect("/");
   }
 
   return { user, profile: profile as AdminProfile };
