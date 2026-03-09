@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
+import { LogoutButton } from "@/components/LogoutButton";
 
 const nav = [
   { href: "/admin/dashboard", label: "Dashboard" },
@@ -36,6 +37,9 @@ export default async function AdminLayout({
               {label}
             </Link>
           ))}
+          <div className="mt-4 border-t border-gray-200 dark:border-gray-700 pt-2">
+            <LogoutButton />
+          </div>
         </nav>
       </aside>
       <main className="flex-1 overflow-auto p-6">{children}</main>

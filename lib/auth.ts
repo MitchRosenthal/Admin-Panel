@@ -30,7 +30,7 @@ export async function requireAdmin(): Promise<{ user: User; profile: AdminProfil
     redirect("/login");
   }
 
-  if (user.email === HARDCODED_ADMIN_EMAIL) {
+  if (user.email?.toLowerCase() === HARDCODED_ADMIN_EMAIL.toLowerCase()) {
     return {
       user,
       profile: { id: user.id, is_superadmin: true } as AdminProfile,
