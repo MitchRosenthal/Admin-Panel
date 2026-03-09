@@ -86,7 +86,15 @@ If auth works locally but not on Vercel, check the following.
 - **Explicit cookie options on redirect:** Response cookies use `path: "/"`, `httpOnly: true`, `sameSite: "lax"`, `secure: true` on HTTPS, and a `maxAge` so cookies persist. (Done.)
 - **Node runtime for auth routes:** Callback and signout routes use `export const runtime = "nodejs"` so cookie behavior matches localhost. (Done.)
 
-**5. Quick test**
+**5. Callback redirect origin on Vercel**
+
+- The callback uses `x-forwarded-host` / `x-forwarded-proto` when present, then falls back to `VERCEL_URL` (set by Vercel), then `request.url`. That way the redirect and cookie `secure` flag use the public URL.
+
+**6. Build vs runtime**
+
+- Build logs only show that the app compiled. If the app still doesn't work after deploy, the failure is at runtime. In **Vercel → your project → Logs** (or the deployment → Functions), reproduce: open the app, click Sign in with Google, complete OAuth. Look for `[auth/callback] exchangeCodeForSession error:` or other errors. Confirm env vars are set for the deployment (Settings → Environment Variables).
+
+**7. Quick test**
 
 - Open production URL in an incognito window → Sign in with Google → you should land on `/` (then redirect to `/admin` or see “Sorry, you do not have access”). If you land on `/login` with no error, the session cookie is not being set or sent; re-check steps 1–2 and that the callback runs without error (check Vercel function logs).
 
@@ -98,6 +106,7 @@ Add new entries at the top. Format: `(YYYY-MM-DD) file_or_scope: short descripti
 
 | Date | File / scope | Description |
 |------|----------------|-------------|
+| 2026-03-05 | app/auth/callback/route.ts, AGENTS.md | Callback uses x-forwarded-host/proto and VERCEL_URL for redirect origin so cookies/redirect use public URL; AGENTS §6: build vs runtime, where to check logs. |
 | 2026-03-05 | app/auth/callback/route.ts, app/auth/signout/route.ts, AGENTS.md | Vercel: callback/signout use runtime = nodejs; callback sets maxAge on copied cookies; added §6 Vercel troubleshooting (Supabase URLs, env vars, Google OAuth, code alignment). |
 | 2026-03-05 | app/auth/callback/route.ts, app/page.tsx | Callback redirects to explicit "/" (new URL("/", origin)); root page force-dynamic so unauthorized users always get "Sorry, you do not have access" when signed in but not admin. |
 | 2026-03-05 | lib/supabase/server.ts, app/auth/callback/route.ts | OAuth callback: use single cookie store (pass to createClient) so session cookies written by exchangeCodeForSession are copied onto redirect response; createClient(cookieStore?) added. |
